@@ -21,7 +21,7 @@ ThisBuild / developers := List(
   )
 )
 
-ThisBuild / description := "Slick classes generated from the database schema for the Transfer Digital Records service"
+ThisBuild / description := "Helper classes related to Keycloak and authentication for the Transfer Digital Records service"
 ThisBuild / licenses := List("MIT" -> new URL("https://choosealicense.com/licenses/mit/"))
 ThisBuild / homepage := Some(url("https://github.com/nationalarchives/tdr-auth-utils"))
 
