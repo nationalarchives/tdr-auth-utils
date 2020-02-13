@@ -1,8 +1,7 @@
 import Dependencies._
 import sbt.url
 
-//lazy val supportedScalaVersions = List("2.13.0", "2.12.8")
-ThisBuild / scalaVersion     := "2.13.0"
+lazy val supportedScalaVersions = List("2.13.0", "2.12.8")
 ThisBuild / version          := "0.0.1"
 ThisBuild / organization     := "uk.gov.nationalarchives"
 ThisBuild / organizationName := "National Archives"
@@ -47,7 +46,8 @@ lazy val root = (project in file("."))
       httpComponents,
       logger,
       jbossLogging
-    )
+    ),
+    crossScalaVersions := supportedScalaVersions
   )
 
 // See https://www.scala-sbt.org/1.x/docs/Using-Sonatype.html for instructions on how to publish to Sonatype.
