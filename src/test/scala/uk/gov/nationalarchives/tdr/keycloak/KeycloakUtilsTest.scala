@@ -9,12 +9,11 @@ import org.scalatest.matchers.should.Matchers
 
 class KeycloakUtilsTest extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
 
-  var mock: KeycloakVerificationMock = _
+  val mock: KeycloakVerificationMock = new KeycloakVerificationMock(9050, "tdr")
   val port = 9050
   val utils = KeycloakUtils(s"http://localhost:$port/auth")
 
   override def beforeEach(): Unit = {
-    mock = new KeycloakVerificationMock(9050, "tdr")
     mock.start()
   }
 
