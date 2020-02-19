@@ -25,7 +25,7 @@ pipeline {
                             sh 'git config --global user.name tna-digital-archiving-jenkins'
                             sh "sbt +'release with-defaults'"
                         }
-                        slackSend color: "good", message: "The auth utils package has been published", channel: "#tdr"
+                        slackSend color: "good", message: "*Auth utils* :arrow_up: The auth utils package has been published", channel: "#tdr"
                     }
                 }
             }
