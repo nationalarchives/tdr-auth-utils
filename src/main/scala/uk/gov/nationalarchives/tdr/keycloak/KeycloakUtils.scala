@@ -1,5 +1,6 @@
 package uk.gov.nationalarchives.tdr.keycloak
 
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import com.typesafe.scalalogging.Logger
 import org.keycloak.adapters.rotation.AdapterTokenVerifier
 import org.keycloak.representations.AccessToken
@@ -12,7 +13,7 @@ class KeycloakUtils(url: String) {
   val ttlSeconds: Int = 10
   val keycloakDeployment = TdrKeycloakDeployment(url, "tdr", ttlSeconds)
 
-  def verifyToken(token: String): Option[AccessToken] = {
+  private def getAccessToken(token: String): Option[AccessToken] = {
     val tryVerify = Try {
       AdapterTokenVerifier.verifyToken(token, keycloakDeployment)
     }
@@ -23,6 +24,11 @@ class KeycloakUtils(url: String) {
         Option.empty
     }
   }
+
+  def token(token:String): Token = {
+    Token(getAccessToken(token), new BearerAccessToken(token))
+  }
+
 }
 
 object KeycloakUtils {
