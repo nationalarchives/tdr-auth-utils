@@ -28,7 +28,6 @@ class KeycloakUtils(url: String) {
   def token(token:String): Token = {
     Token(getAccessToken(token), new BearerAccessToken(token))
   }
-
 }
 
 object KeycloakUtils {

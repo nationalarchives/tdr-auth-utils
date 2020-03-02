@@ -49,7 +49,7 @@ class KeycloakUtilsTest extends AnyFlatSpec with Matchers with BeforeAndAfterEac
     token.roles should contain(role)
   }
 
-  "The verifyToken method " should "return a bearer token for an invalid token string " in {
+  "The token method " should "return a bearer token for an invalid token string " in {
     val mockToken = "faketoken"
     val token = utils.token(mockToken)
     token.bearerAccessToken.getValue should equal(mockToken)
