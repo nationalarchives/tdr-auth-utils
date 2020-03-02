@@ -8,5 +8,5 @@ object Dependencies {
   lazy val httpComponents = "org.apache.httpcomponents" % "httpclient" % "4.5.11"
   lazy val jbossLogging = "org.jboss.logging" % "jboss-logging" % "3.4.1.Final"
   lazy val keycloakMock = "com.tngtech.keycloakmock" % "mock" % "0.2.0"
-
+  lazy val oauth2 = "com.nimbusds" % "oauth2-oidc-sdk" % "7.1.1"
 }

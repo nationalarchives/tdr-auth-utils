@@ -65,6 +65,7 @@ lazy val root = (project in file("."))
       httpComponents,
       logger,
       jbossLogging,
+      oauth2,
       keycloakMock % Test
     ),
     crossScalaVersions := supportedScalaVersions
