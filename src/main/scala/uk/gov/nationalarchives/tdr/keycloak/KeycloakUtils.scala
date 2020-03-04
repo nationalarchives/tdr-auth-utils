@@ -25,8 +25,8 @@ class KeycloakUtils(url: String) {
     }
   }
 
-  def token(token:String): Token = {
-    Token(getAccessToken(token), new BearerAccessToken(token))
+  def token(token:String): Option[Token] = {
+    getAccessToken(token).map(at => Token(at, new BearerAccessToken(token)))
   }
 }
 
