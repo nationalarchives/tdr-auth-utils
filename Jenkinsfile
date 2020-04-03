@@ -10,13 +10,13 @@ pipeline {
             agent {
                 ecs {
                     inheritFrom "base"
-                    taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publish-${params.STAGE}:1"
+                    taskDefinitionOverride "arn:aws:ecs:eu-west-2:${env.MANAGEMENT_ACCOUNT}:task-definition/s3publishz-${params.STAGE}:1"
                 }
             }
             steps {
                 script {
                     sshagent(['github-jenkins']) {
-                        sh 'git push --set-upstream origin master'
+                        sh "git push --set-upstream origin ${env.GIT_LOCAL_BRANCH}"
                         sh 'git config --global user.email tna-digital-archiving-jenkins@nationalarchives.gov.uk'
                         sh 'git config --global user.name tna-digital-archiving-jenkins'
                         sh "sbt +'release with-defaults'"
