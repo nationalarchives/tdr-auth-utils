@@ -25,6 +25,14 @@ ThisBuild / description := "Helper classes related to Keycloak and authenticatio
 ThisBuild / licenses := List("MIT" -> new URL("https://choosealicense.com/licenses/mit/"))
 ThisBuild / homepage := Some(url("https://github.com/nationalarchives/tdr-auth-utils"))
 
+s3acl := None
+s3sse := true
+ThisBuild / publishMavenStyle := false
+
+ThisBuild / publishTo := {
+  val prefix = if (isSnapshot.value) "snapshots" else "releases"
+  Some(s3resolver.value(s"My ${prefix} S3 bucket", s3(s"$prefix.nationalarchives.gov.uk")))
+}
 
 resolvers +=
   "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
