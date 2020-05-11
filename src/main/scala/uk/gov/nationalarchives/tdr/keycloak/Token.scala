@@ -15,6 +15,11 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
       case Some(access) => access.getRoles.asScala.toSet
       case None => Set()
   }
+  def backendChecksRoles: Set[String] =
+    Option(token.getResourceAccess("tdr-backend-checks")) match {
+      case Some(access) => access.getRoles.asScala.toSet
+      case None => Set()
+    }
 }
 object Token {
   def apply(token: AccessToken, bearerAccessToken: BearerAccessToken): Token = new Token(token, bearerAccessToken)
