@@ -6,8 +6,11 @@ import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
 import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers
 
+import scala.concurrent.ExecutionContext
+
 
 class KeycloakUtilsTest extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
+  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
 
   val mock: KeycloakVerificationMock = new KeycloakVerificationMock(9050, "tdr")
   val port = 9050
