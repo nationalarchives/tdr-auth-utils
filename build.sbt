@@ -55,6 +55,7 @@ lazy val root = (project in file("."))
       sttpAsyncClient,
       circeCore,
       circeGeneric,
-      keycloakMock % Test
+      keycloakMock % Test,
+      wiremock % Test
     )
   )

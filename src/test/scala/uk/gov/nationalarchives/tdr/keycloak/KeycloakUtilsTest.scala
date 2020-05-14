@@ -1,28 +1,18 @@
 package uk.gov.nationalarchives.tdr.keycloak
 
-import org.scalatest.flatspec.AnyFlatSpec
-import com.tngtech.keycloakmock.api.KeycloakVerificationMock
+import java.util.concurrent.TimeUnit
+
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
+import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
-import org.scalatest.BeforeAndAfterEach
-import org.scalatest.matchers.should.Matchers
+import org.scalatest.matchers.should.Matchers._
+import sttp.client.HttpError
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{Await, Awaitable}
+import scala.concurrent.duration.Duration
 
-
-class KeycloakUtilsTest extends AnyFlatSpec with Matchers with BeforeAndAfterEach {
-  implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
-
-  val mock: KeycloakVerificationMock = new KeycloakVerificationMock(9050, "tdr")
-  val port = 9050
-  val utils = KeycloakUtils(s"http://localhost:$port/auth")
-
-  override def beforeEach(): Unit = {
-    mock.start()
-  }
-
-  override def afterEach(): Unit = {
-    mock.stop()
-  }
+class KeycloakUtilsTest extends ServiceTest {
+  def await[T](result: Awaitable[T]): T = Await.result(result, Duration(5, TimeUnit.SECONDS))
 
   "The token method " should "return a bearer token for a valid token string " in {
     val mockToken = mock.getAccessToken(aTokenConfig().build())
@@ -56,5 +46,24 @@ class KeycloakUtilsTest extends AnyFlatSpec with Matchers with BeforeAndAfterEac
     val mockToken = "faketoken"
     val token = utils.token(mockToken)
     token.isDefined should be(false)
+  }
+
+  "The service account token method" should "call the auth service" in {
+    authOk
+    val utils = KeycloakUtils(authUrl)
+    await(utils.serviceAccountToken("id", "secret"))
+
+    wiremockAuthServer.verify(postRequestedFor(urlEqualTo(authPath))
+      .withRequestBody(equalTo("grant_type=client_credentials"))
+      .withHeader("Authorization", equalTo("Basic aWQ6c2VjcmV0")))
+  }
+
+  "The service account token method" should "return an error if the api is unavailable" in {
+    authUnavailable
+    val utils = KeycloakUtils(authUrl)
+    val exception = intercept[HttpError] {
+      await(utils.serviceAccountToken("id", "secret"))
+    }
+    exception.body should equal("An error occurred contacting the auth server")
   }
 }
