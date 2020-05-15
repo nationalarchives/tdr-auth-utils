@@ -64,6 +64,6 @@ class KeycloakUtilsTest extends ServiceTest {
     val exception = intercept[HttpError] {
       await(utils.serviceAccountToken("id", "secret"))
     }
-    exception.body should equal("An error occurred contacting the auth server")
+    exception.body should equal("")
   }
 }

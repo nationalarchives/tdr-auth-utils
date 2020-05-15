@@ -53,7 +53,7 @@ class KeycloakUtils(url: String)(implicit val executionContext: ExecutionContext
     val authResponse = response.flatMap { r =>
       r.body match {
         case Right(body) => Future.successful(body)
-        case Left(_) => Future.failed(HttpError("An error occurred contacting the auth server"))
+        case Left(e) => Future.failed(e)
       }
     }
 
