@@ -1,15 +1,15 @@
 package uk.gov.nationalarchives.tdr.keycloak
 
+
 import java.util.concurrent.TimeUnit
 
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
-import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
 import org.scalatest.matchers.should.Matchers._
 import sttp.client.HttpError
 
-import scala.concurrent.{Await, Awaitable}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Awaitable}
 
 class KeycloakUtilsTest extends ServiceTest {
   def await[T](result: Awaitable[T]): T = Await.result(result, Duration(5, TimeUnit.SECONDS))
@@ -40,6 +40,21 @@ class KeycloakUtilsTest extends ServiceTest {
     val token = utils.token(mockToken).get
     token.roles.size should be(1)
     token.roles should contain(role)
+  }
+
+  "The token method" should "return the correct back end checks roles for a valid token" in {
+    val role = "backend_check_role"
+    val mockToken = mock.getAccessToken(aTokenConfig().withResourceRole("tdr-backend-checks", role).build())
+    val token = utils.token(mockToken).get
+    token.backendChecksRoles.size should be (1)
+    token.backendChecksRoles should contain(role)
+  }
+
+  "The token method" should "return no back end checks roles for a valid token if no roles defined" in {
+    val role = "backend_check_role"
+    val mockToken = mock.getAccessToken(aTokenConfig().build())
+    val token = utils.token(mockToken).get
+    token.backendChecksRoles.size should be (0)
   }
 
   "The token method " should "return an empty user id for an invalid token" in {
