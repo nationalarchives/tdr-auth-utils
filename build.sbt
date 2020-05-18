@@ -50,6 +50,12 @@ lazy val root = (project in file("."))
       logger,
       jbossLogging,
       oauth2,
-      keycloakMock % Test
+      sttp,
+      sttpCirce,
+      sttpAsyncClient,
+      circeCore,
+      circeGeneric,
+      keycloakMock % Test,
+      wiremock % Test
     )
   )
