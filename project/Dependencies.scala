@@ -15,7 +15,4 @@ object Dependencies {
   lazy val sttpAsyncClient = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % "2.0.0-RC9"
   lazy val circeCore = "io.circe" %% "circe-core" % "0.13.0"
   lazy val circeGeneric = "io.circe" %% "circe-generic" % "0.13.0"
-
-
-
 }
