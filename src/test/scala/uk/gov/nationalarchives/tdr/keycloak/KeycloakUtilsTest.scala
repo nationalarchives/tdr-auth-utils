@@ -6,12 +6,13 @@ import java.util.concurrent.TimeUnit
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
 import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
 import org.scalatest.matchers.should.Matchers._
-import sttp.client.HttpError
+import sttp.client.{HttpError, HttpURLConnectionBackend, Identity, NothingT, SttpBackend}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable}
 
 class KeycloakUtilsTest extends ServiceTest {
+  implicit val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
   def await[T](result: Awaitable[T]): T = Await.result(result, Duration(5, TimeUnit.SECONDS))
 
   "The token method " should "return a bearer token for a valid token string " in {
