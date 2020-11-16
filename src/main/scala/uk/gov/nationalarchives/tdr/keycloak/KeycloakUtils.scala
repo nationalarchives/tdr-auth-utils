@@ -2,20 +2,18 @@ package uk.gov.nationalarchives.tdr.keycloak
 
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import com.typesafe.scalalogging.Logger
-import io.circe.generic.auto._
 import io.circe.Error
+import io.circe.generic.auto._
 import org.keycloak.adapters.rotation.AdapterTokenVerifier
 import org.keycloak.representations.AccessToken
 import sttp.client._
-import sttp.client.asynchttpclient.WebSocketHandler
-import sttp.client.asynchttpclient.future.AsyncHttpClientFutureBackend
 import sttp.client.circe._
 import uk.gov.nationalarchives.tdr.keycloak.KeycloakUtils.AuthResponse
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.language.higherKinds
 import scala.reflect.{ClassTag, classTag}
-import scala.util.{Failure, Success, Try}
+import scala.util.Try
 
 class KeycloakUtils(url: String)(implicit val executionContext: ExecutionContext) {
 
@@ -23,20 +21,22 @@ class KeycloakUtils(url: String)(implicit val executionContext: ExecutionContext
   val ttlSeconds: Int = 10
   val keycloakDeployment = TdrKeycloakDeployment(url, "tdr", ttlSeconds)
 
-  private def getAccessToken(token: String): Option[AccessToken] = {
-    val tryVerify = Try {
+  case class MissingUserIdException() extends Exception("The user id in the token is missing")
+
+  private def getAccessToken(token: String): Either[Throwable, AccessToken] = {
+    Try {
       AdapterTokenVerifier.verifyToken(token, keycloakDeployment)
-    }
-    tryVerify match {
-      case Success(token) => Some(token)
-      case Failure(e) =>
-        logger.warn(e.getMessage)
-        Option.empty
-    }
+    }.toEither
   }
 
-  def token(token:String): Option[Token] = {
-    getAccessToken(token).map(at => Token(at, new BearerAccessToken(token)))
+  def token(token:String): Either[Throwable, Token] = {
+    getAccessToken(token).flatMap(at => {
+      val validatedToken = Token(at, new BearerAccessToken(token))
+      validatedToken.userId match {
+        case Some(_) => Right(validatedToken)
+        case None => Left(MissingUserIdException())
+      }
+    })
   }
 
   def serviceAccountToken[T[_]](clientId: String, clientSecret: String)(implicit backend: SttpBackend[T, Nothing, NothingT], tag: ClassTag[T[_]]): Future[BearerAccessToken] = {
