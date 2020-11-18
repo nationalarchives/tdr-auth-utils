@@ -11,6 +11,7 @@ import sttp.client.circe._
 import uk.gov.nationalarchives.tdr.keycloak.KeycloakUtils.AuthResponse
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.jdk.CollectionConverters._
 import scala.language.higherKinds
 import scala.reflect.{ClassTag, classTag}
 import scala.util.Try
@@ -32,7 +33,7 @@ class KeycloakUtils(url: String)(implicit val executionContext: ExecutionContext
   def token(token:String): Either[Throwable, Token] = {
     getAccessToken(token).flatMap(at => {
       val validatedToken = Token(at, new BearerAccessToken(token))
-      validatedToken.userId match {
+      at.getOtherClaims.asScala.get("user_id") match {
         case Some(_) => Right(validatedToken)
         case None => Left(MissingUserIdException())
       }
