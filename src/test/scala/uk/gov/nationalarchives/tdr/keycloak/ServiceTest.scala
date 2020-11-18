@@ -4,11 +4,11 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
 import com.tngtech.keycloakmock.api.KeycloakVerificationMock
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, EitherValues}
 
 import scala.concurrent.ExecutionContext
 
-class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfterAll {
+class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfterAll with EitherValues {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
 
