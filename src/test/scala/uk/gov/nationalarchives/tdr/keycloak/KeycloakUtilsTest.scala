@@ -28,7 +28,7 @@ class KeycloakUtilsTest extends ServiceTest {
   "The token method " should "return the correct user id for a valid token" in {
     val mockToken = mock.getAccessToken(configWithUser.build())
     val token = utils.token(mockToken).right.value
-    token.userId should equal(Some(userId.toString))
+    token.userId should equal(userId.toString)
   }
 
   "The token method " should "return the correct transferring body for a valid token" in {
