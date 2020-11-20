@@ -17,18 +17,18 @@ pipeline {
       }
     }
     stage('Test') {
-        agent {
-            ecs {
-                inheritFrom 'transfer-frontend'
-            }
+      agent {
+        ecs {
+          inheritFrom 'transfer-frontend'
         }
-        steps {
-            script {
-                tdr.reportStartOfBuildToGitHub(repo, env.GIT_COMMIT)
-            }
-            checkout scm
-            sh 'sbt -no-colors test'
+      }
+      steps {
+        script {
+          tdr.reportStartOfBuildToGitHub(repo, env.GIT_COMMIT)
         }
+        checkout scm
+        sh 'sbt -no-colors test'
+      }
     }
     stage('Post-build') {
       when {
