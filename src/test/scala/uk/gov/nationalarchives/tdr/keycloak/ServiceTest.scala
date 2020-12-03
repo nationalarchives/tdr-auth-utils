@@ -14,7 +14,8 @@ class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfte
 
   val mock: KeycloakVerificationMock = new KeycloakVerificationMock(9050, "tdr")
   val port = 9050
-  val utils = KeycloakUtils(s"http://localhost:$port/auth")
+  val url = s"http://localhost:$port/auth"
+  val utils: KeycloakUtils = KeycloakUtils()
 
   val wiremockAuthServer = new WireMockServer(0)
 
