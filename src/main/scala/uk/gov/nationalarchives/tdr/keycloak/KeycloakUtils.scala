@@ -16,21 +16,20 @@ import scala.language.higherKinds
 import scala.reflect.{ClassTag, classTag}
 import scala.util.Try
 
-class KeycloakUtils(url: String)(implicit val executionContext: ExecutionContext) {
+class KeycloakUtils(implicit val executionContext: ExecutionContext) {
 
   val logger = Logger("KeycloakUtils")
   val ttlSeconds: Int = 10
-  val keycloakDeployment = TdrKeycloakDeployment(url, "tdr", ttlSeconds)
 
   case class MissingUserIdException() extends Exception("The user id in the token is missing")
 
-  private def getAccessToken(token: String): Either[Throwable, AccessToken] = {
+  private def getAccessToken(token: String)(implicit keycloakDeployment: TdrKeycloakDeployment): Either[Throwable, AccessToken] = {
     Try {
       AdapterTokenVerifier.verifyToken(token, keycloakDeployment)
     }.toEither
   }
 
-  def token(token:String): Either[Throwable, Token] = {
+  def token(token:String)(implicit keycloakDeployment: TdrKeycloakDeployment): Either[Throwable, Token] = {
     getAccessToken(token).flatMap(at => {
       val validatedToken = Token(at, new BearerAccessToken(token))
       at.getOtherClaims.asScala.get("user_id") match {
@@ -40,14 +39,14 @@ class KeycloakUtils(url: String)(implicit val executionContext: ExecutionContext
     })
   }
 
-  def serviceAccountToken[T[_]](clientId: String, clientSecret: String)(implicit backend: SttpBackend[T, Nothing, NothingT], tag: ClassTag[T[_]]): Future[BearerAccessToken] = {
+  def serviceAccountToken[T[_]](clientId: String, clientSecret: String)(implicit backend: SttpBackend[T, Nothing, NothingT], tag: ClassTag[T[_]], keycloakDeployment: TdrKeycloakDeployment): Future[BearerAccessToken] = {
 
     val body: Map[String, String] = Map("grant_type" -> "client_credentials")
 
     val response: T[Response[Either[ResponseError[Error], AuthResponse]]] = basicRequest
       .body(body)
       .auth.basic(clientId, clientSecret)
-      .post(uri"$url/realms/tdr/protocol/openid-connect/token")
+      .post(uri"${keycloakDeployment.getAuthServerBaseUrl}/realms/tdr/protocol/openid-connect/token")
       .response(asJson[AuthResponse])
       .send()
 
@@ -72,5 +71,5 @@ class KeycloakUtils(url: String)(implicit val executionContext: ExecutionContext
 object KeycloakUtils {
   case class AuthResponse(access_token: String)
 
-  def apply(url: String)(implicit executionContext: ExecutionContext): KeycloakUtils = new KeycloakUtils(url)
+  def apply()(implicit executionContext: ExecutionContext): KeycloakUtils = new KeycloakUtils()
 }

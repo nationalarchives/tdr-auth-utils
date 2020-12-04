@@ -20,18 +20,21 @@ class KeycloakUtilsTest extends ServiceTest {
   def configWithUser: TokenConfig.Builder = aTokenConfig().withClaim("user_id", userId.toString)
 
   "The token method " should "return a bearer token for a valid token string " in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build)
     val token: Token = utils.token(mockToken).right.value
     token.bearerAccessToken.getValue should equal(mockToken)
   }
 
   "The token method " should "return the correct user id for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
     val token = utils.token(mockToken).right.value
     token.userId should equal(userId)
   }
 
   "The token method " should "return the correct transferring body for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val body = "body"
     val mockToken = mock.getAccessToken(configWithUser.withClaim("body", body).build())
     val token = utils.token(mockToken).right.value
@@ -39,6 +42,7 @@ class KeycloakUtilsTest extends ServiceTest {
   }
 
   "The token method " should "return the correct roles for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val role = "role_admin"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr", role).build())
     val token = utils.token(mockToken).right.value
@@ -47,6 +51,7 @@ class KeycloakUtilsTest extends ServiceTest {
   }
 
   "The token method" should "return the correct back end checks roles for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val role = "backend_check_role"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-backend-checks", role).build())
     val token = utils.token(mockToken).right.value
@@ -55,26 +60,30 @@ class KeycloakUtilsTest extends ServiceTest {
   }
 
   "The token method" should "return no back end checks roles for a valid token if no roles defined" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
     val token = utils.token(mockToken).right.value
     token.backendChecksRoles.size should be (0)
   }
 
   "The token method " should "return an error for an invalid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = "faketoken"
     val token = utils.token(mockToken)
     token.isLeft should be(true)
   }
 
   "The token method" should "return an error if the user id is not set in the token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(aTokenConfig().build())
     val error = utils.token(mockToken).left.value
     error.getMessage should equal("The user id in the token is missing")
   }
 
   "The service account token method" should "call the auth service" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
     authOk
-    val utils = KeycloakUtils(authUrl)
+    val utils = KeycloakUtils()
     await(utils.serviceAccountToken("id", "secret"))
 
     wiremockAuthServer.verify(postRequestedFor(urlEqualTo(authPath))
@@ -83,8 +92,9 @@ class KeycloakUtilsTest extends ServiceTest {
   }
 
   "The service account token method" should "return an error if the api is unavailable" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
     authUnavailable
-    val utils = KeycloakUtils(authUrl)
+    val utils = KeycloakUtils()
     val exception = intercept[HttpError] {
       await(utils.serviceAccountToken("id", "secret"))
     }
