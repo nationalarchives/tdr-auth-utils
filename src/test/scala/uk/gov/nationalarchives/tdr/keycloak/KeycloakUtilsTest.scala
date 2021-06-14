@@ -66,6 +66,22 @@ class KeycloakUtilsTest extends ServiceTest {
     token.backendChecksRoles.size should be (0)
   }
 
+  "The token method" should "return the correct reporting role for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val role = "reporting_role"
+    val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-reporting", role).build())
+    val token = utils.token(mockToken).right.value
+    token.reportingRoles.size should be (1)
+    token.reportingRoles should contain(role)
+  }
+
+  "The token method" should "return no reporting roles for a valid token if not roles defined" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser.build())
+    val token = utils.token(mockToken).right.value
+    token.reportingRoles.size should be (0)
+  }
+
   "The token method " should "return an error for an invalid token" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = "faketoken"
