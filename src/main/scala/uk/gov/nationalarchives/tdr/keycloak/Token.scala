@@ -5,7 +5,7 @@ import java.util.UUID
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import org.keycloak.representations.AccessToken
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessToken) {
   private def getOtherClaim(name: String): Option[String] = token.getOtherClaims.asScala.get(name).map(_.toString)
@@ -20,6 +20,12 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   }
   def backendChecksRoles: Set[String] =
     Option(token.getResourceAccess("tdr-backend-checks")) match {
+      case Some(access) => access.getRoles.asScala.toSet
+      case None => Set()
+    }
+
+  def reportingRoles: Set[String] =
+    Option(token.getResourceAccess("tdr-reporting")) match {
       case Some(access) => access.getRoles.asScala.toSet
       case None => Set()
     }
