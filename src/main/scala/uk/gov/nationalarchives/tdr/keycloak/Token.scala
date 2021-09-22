@@ -13,6 +13,8 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   // The method to get the token verifies that the user_id is set so this should never be empty
   def userId: UUID = UUID.fromString(getOtherClaim("user_id").get)
   def transferringBody: Option[String] = getOtherClaim("body")
+  def judgmentTransfer: Option[String] = getOtherClaim("judgment_transfer")
+  def standardTransfer: Option[String] = getOtherClaim("standard_transfer")
   def roles: Set[String] =
     Option(token.getResourceAccess("tdr")) match {
       case Some(access) => access.getRoles.asScala.toSet
