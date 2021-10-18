@@ -41,6 +41,20 @@ class KeycloakUtilsTest extends ServiceTest {
     token.transferringBody should equal(Some(body))
   }
 
+  "The token method " should "return judgment user type 'true' for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser.withClaim("judgment_user", "true").build())
+    val token = utils.token(mockToken).right.value
+    token.judgmentUser should equal(Some("true"))
+  }
+
+  "The token method " should "return standard user type 'true' for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser.withClaim("standard_user", "true").build())
+    val token = utils.token(mockToken).right.value
+    token.standardUSer should equal(Some("true"))
+  }
+
   "The token method " should "return the correct roles for a valid token" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val role = "role_admin"
