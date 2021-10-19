@@ -14,7 +14,7 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   def userId: UUID = UUID.fromString(getOtherClaim("user_id").get)
   def transferringBody: Option[String] = getOtherClaim("body")
   def judgmentUser: Option[String] = getOtherClaim("judgment_user")
-  def standardUSer: Option[String] = getOtherClaim("standard_user")
+  def standardUser: Option[String] = getOtherClaim("standard_user")
   def roles: Set[String] =
     Option(token.getResourceAccess("tdr")) match {
       case Some(access) => access.getRoles.asScala.toSet

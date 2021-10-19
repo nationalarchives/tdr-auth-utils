@@ -52,7 +52,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("standard_user", "true").build())
     val token = utils.token(mockToken).right.value
-    token.standardUSer should equal(Some("true"))
+    token.standardUser should equal(Some("true"))
   }
 
   "The token method " should "return the correct roles for a valid token" in {
