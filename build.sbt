@@ -27,17 +27,11 @@ ThisBuild / homepage := Some(url("https://github.com/nationalarchives/tdr-auth-u
 
 scalaVersion := "2.13.0"
 
-s3acl := None
-s3sse := true
+githubOwner := "nationalarchives"
+githubRepository := "tdr-generated-graphql"
+githubTokenSource := TokenSource.GitConfig("github.token")
+
 ThisBuild / publishMavenStyle := true
-
-ThisBuild / publishTo := {
-  val prefix = if (isSnapshot.value) "snapshots" else "releases"
-  Some(s3resolver.value(s"My ${prefix} S3 bucket", s3(s"tdr-$prefix-mgmt")))
-}
-
-resolvers +=
-  "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
 lazy val root = (project in file("."))
   .settings(
