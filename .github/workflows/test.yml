@@ -1,4 +1,4 @@
-name: TDR Run Graphql Schema Check
+name: TDR Run Tests
 on:
   pull_request:
   push:
