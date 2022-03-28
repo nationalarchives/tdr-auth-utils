@@ -12,12 +12,12 @@ ThisBuild / scmInfo := Some(
     "git@github.com:nationalarchives/tdr-auth-utils.git"
   )
 )
-ThisBuild / developers := List(
+developers := List(
   Developer(
-    id    = "SP",
-    name  = "Sam Palmer",
-    email = "sam.palmer@nationalarchives.gov.uk",
-    url   = url("https://github.com/nationalarchives/tdr-auth-utils")
+    id    = "tna-digital-archiving-jenkins",
+    name  = "TNA Digital Archiving",
+    email = "digitalpreservation@nationalarchives.gov.uk",
+    url   = url("https://github.com/nationalarchives/tdr-generated-grapqhl")
   )
 )
 

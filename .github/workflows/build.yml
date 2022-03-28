@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - master
-      - move-to-maven-and-github-actions
 jobs:
   deploy:
     if: ${{ !startsWith( github.event.commits[0].message, 'Version Bump from build number') }}

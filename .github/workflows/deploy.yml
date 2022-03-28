@@ -1,10 +1,9 @@
 name: TDR Deploy Auth Utils
 on:
   workflow_dispatch:
-
 jobs:
   deploy:
-    uses: nationalarchives/tdr-github-actions/.github/workflows/sbt_release.yml@add-sbt-release-job
+    uses: nationalarchives/tdr-github-actions/.github/workflows/sbt_release.yml@main
     with:
       library-name: "Auth utils"
     secrets:
