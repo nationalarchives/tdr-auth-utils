@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
 jobs:
   deploy:
-    uses: nationalarchives/tdr-github-actions/.github/workflows/sbt_release.yml@use-gpg-to-sign-commits
+    uses: nationalarchives/tdr-github-actions/.github/workflows/sbt_release.yml@main
     with:
       library-name: "Auth utils"
     secrets:
