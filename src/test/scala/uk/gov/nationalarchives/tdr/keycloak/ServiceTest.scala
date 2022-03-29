@@ -2,7 +2,7 @@ package uk.gov.nationalarchives.tdr.keycloak
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
-import com.tngtech.keycloakmock.api.KeycloakVerificationMock
+import com.tngtech.keycloakmock.api.{KeycloakMock, ServerConfig}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, EitherValues}
 
@@ -11,8 +11,11 @@ import scala.concurrent.ExecutionContext
 class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfterAll with EitherValues {
 
   implicit val ec: ExecutionContext = ExecutionContext.global
-
-  val mock: KeycloakVerificationMock = new KeycloakVerificationMock(9050, "tdr")
+  val serverConfig: ServerConfig = ServerConfig.aServerConfig()
+    .withPort(9050)
+    .withDefaultRealm("tdr")
+    .build()
+  val mock: KeycloakMock = new KeycloakMock(serverConfig)
   val port = 9050
   val url = s"http://localhost:$port/auth"
   val utils: KeycloakUtils = KeycloakUtils()
