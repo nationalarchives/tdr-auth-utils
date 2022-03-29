@@ -1,0 +1,11 @@
+name: TDR Check
+on:
+  push:
+jobs:
+  test:
+    runs-on:  ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: master
+      - run: echo ${{ github.event.commits[0].message }}
