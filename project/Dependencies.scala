@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
   private lazy val circeVersion = "0.14.1"
   private lazy val keycloakVersion = "16.1.1"
-  private lazy val softWareMillVersion = "2.3.0"
+  private lazy val softWareMillVersion = "3.5.1"
 
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.12-RC2"
   lazy val keycloakAdapterCore  = "org.keycloak" % "keycloak-adapter-core" % keycloakVersion
@@ -14,8 +14,8 @@ object Dependencies {
   lazy val keycloakMock = "com.tngtech.keycloakmock" % "mock" % "0.11.0"
   lazy val wiremock = "com.github.tomakehurst" % "wiremock-jre8" % "2.32.0"
   lazy val oauth2 = "com.nimbusds" % "oauth2-oidc-sdk" % "7.5"
-  lazy val sttp = "com.softwaremill.sttp.client" %% "core" % softWareMillVersion
-  lazy val sttpCirce = "com.softwaremill.sttp.client" %% "circe" % softWareMillVersion
+  lazy val sttp = "com.softwaremill.sttp.client3" %% "core" % softWareMillVersion
+  lazy val sttpCirce = "com.softwaremill.sttp.client3" %% "circe" % softWareMillVersion
   lazy val sttpAsyncClient = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % "2.3.0"
   lazy val circeCore = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
