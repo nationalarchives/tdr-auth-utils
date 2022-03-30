@@ -8,13 +8,13 @@ import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFo
 import com.tngtech.keycloakmock.api.TokenConfig
 import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
 import org.scalatest.matchers.should.Matchers._
-import sttp.client.{HttpError, HttpURLConnectionBackend, Identity, NothingT, SttpBackend}
+import sttp.client3.{HttpError, HttpURLConnectionBackend, Identity, SttpBackend}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable}
 
 class KeycloakUtilsTest extends ServiceTest {
-  implicit val backend: SttpBackend[Identity, Nothing, NothingT] = HttpURLConnectionBackend()
+  implicit val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()
   def await[T](result: Awaitable[T]): T = Await.result(result, Duration(5, TimeUnit.SECONDS))
   val userId: UUID = UUID.randomUUID()
   def configWithUser: TokenConfig.Builder = aTokenConfig().withClaim("user_id", userId.toString)
@@ -161,7 +161,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
     authUnavailable
     val utils = KeycloakUtils()
-    val exception = intercept[HttpError] {
+    val exception = intercept[HttpError[String]] {
       await(utils.serviceAccountToken("id", "secret"))
     }
     exception.body should equal("")
