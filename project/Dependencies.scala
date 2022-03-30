@@ -9,7 +9,7 @@ object Dependencies {
   lazy val keycloakAdapterCore  = "org.keycloak" % "keycloak-adapter-core" % keycloakVersion
   lazy val keycloakCore = "org.keycloak" % "keycloak-core" % keycloakVersion
   lazy val logger = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.4"
-  lazy val httpComponents = "org.apache.httpcomponents" % "httpclient" % "4.5.11"
+  lazy val httpComponents = "org.apache.httpcomponents" % "httpclient" % "4.5.13"
   lazy val jbossLogging = "org.jboss.logging" % "jboss-logging" % "3.4.3.Final"
   lazy val keycloakMock = "com.tngtech.keycloakmock" % "mock" % "0.11.0"
   lazy val wiremock = "com.github.tomakehurst" % "wiremock-jre8" % "2.26.3"
