@@ -16,7 +16,6 @@ object Dependencies {
   lazy val oauth2 = "com.nimbusds" % "oauth2-oidc-sdk" % "9.35"
   lazy val sttp = "com.softwaremill.sttp.client3" %% "core" % softWareMillVersion
   lazy val sttpCirce = "com.softwaremill.sttp.client3" %% "circe" % softWareMillVersion
-  lazy val sttpAsyncClient = "com.softwaremill.sttp.client" %% "async-http-client-backend-future" % "2.3.0"
   lazy val circeCore = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
 }

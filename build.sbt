@@ -63,7 +63,6 @@ lazy val root = (project in file("."))
       oauth2,
       sttp,
       sttpCirce,
-      sttpAsyncClient,
       circeCore,
       circeGeneric,
       keycloakMock % Test,
