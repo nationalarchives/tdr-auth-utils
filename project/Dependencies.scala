@@ -13,7 +13,7 @@ object Dependencies {
   lazy val jbossLogging = "org.jboss.logging" % "jboss-logging" % "3.5.0.Final"
   lazy val keycloakMock = "com.tngtech.keycloakmock" % "mock" % "0.12.0"
   lazy val wiremock = "com.github.tomakehurst" % "wiremock-jre8" % "2.33.2"
-  lazy val oauth2 = "com.nimbusds" % "oauth2-oidc-sdk" % "9.37"
+  lazy val oauth2 = "com.nimbusds" % "oauth2-oidc-sdk" % "9.37.1"
   lazy val sttp = "com.softwaremill.sttp.client3" %% "core" % softWareMillVersion
   lazy val sttpCirce = "com.softwaremill.sttp.client3" %% "circe" % softWareMillVersion
   lazy val circeCore = "io.circe" %% "circe-core" % circeVersion
