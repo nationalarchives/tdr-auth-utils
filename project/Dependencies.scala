@@ -2,7 +2,7 @@ import sbt._
 
 object Dependencies {
   private lazy val circeVersion = "0.14.2"
-  private lazy val keycloakVersion = "18.0.1"
+  private lazy val keycloakVersion = "18.0.2"
   private lazy val softWareMillVersion = "3.6.2"
 
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.12"
