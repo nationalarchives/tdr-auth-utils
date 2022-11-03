@@ -13,6 +13,7 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   // The method to get the token verifies that the user_id is set so this should never be empty
   def userId: UUID = UUID.fromString(getOtherClaim("user_id").get)
   def name: String = token.getName
+  def email: String = token.getEmail
   def transferringBody: Option[String] = getOtherClaim("body")
   def isJudgmentUser: Boolean = getOtherClaim("judgment_user").getOrElse("false").toBoolean
   def isStandardUser: Boolean = getOtherClaim("standard_user").getOrElse("false").toBoolean

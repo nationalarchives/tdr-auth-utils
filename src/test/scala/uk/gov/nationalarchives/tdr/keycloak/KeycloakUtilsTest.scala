@@ -49,6 +49,14 @@ class KeycloakUtilsTest extends ServiceTest {
     token.name should equal(name)
   }
 
+  "The token method " should "return the email for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val email = "email"
+    val mockToken = mock.getAccessToken(configWithUser.withEmail(email).build())
+    val token = utils.token(mockToken).right.value
+    token.email should equal(email)
+  }
+
   "The token method " should "return judgment user type 'true' where claim set to true" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("judgment_user", "true").build())
