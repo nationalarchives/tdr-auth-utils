@@ -5,7 +5,7 @@ object Dependencies {
   private lazy val keycloakVersion = "22.0.1"
   private lazy val softWareMillVersion = "3.9.0"
 
-  lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.16"
+  lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.17"
   lazy val keycloakAdapterCore  = "org.keycloak" % "keycloak-adapter-core" % keycloakVersion
   lazy val keycloakCore = "org.keycloak" % "keycloak-core" % keycloakVersion
   lazy val logger = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
