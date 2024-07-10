@@ -2,8 +2,8 @@ package uk.gov.nationalarchives.tdr.keycloak
 
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import com.tngtech.keycloakmock.api.{KeycloakMock, ServerConfig}
-import org.keycloak.representations.idm.UserRepresentation
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, EitherValues}
 
@@ -24,15 +24,15 @@ class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfte
   val wiremockAuthServer = new WireMockServer(0)
 
   val authPath = "/auth/realms/tdr/protocol/openid-connect/token"
-  def authUrl = wiremockAuthServer.url("/auth")
+  def authUrl: String = wiremockAuthServer.url("/auth")
 
-  def authOk = wiremockAuthServer.stubFor(post(urlEqualTo(authPath))
+  def authOk: StubMapping = wiremockAuthServer.stubFor(post(urlEqualTo(authPath))
     .willReturn(okJson("""{"access_token": "token"}""")))
 
-  def authUnavailable(url: String = authPath) = wiremockAuthServer.stubFor(post(urlEqualTo(url)).willReturn(serverError()))
+  def authUnavailable(url: String = authPath): StubMapping = wiremockAuthServer.stubFor(post(urlEqualTo(url)).willReturn(serverError()))
 
   val userPath = "/auth/realms/tdr/users"
-  def userOk(userId: String) = wiremockAuthServer.stubFor(post(urlEqualTo(s"$userPath/$userId"))
+  def userOk(userId: String): StubMapping = wiremockAuthServer.stubFor(post(urlEqualTo(s"$userPath/$userId"))
     .willReturn(okJson("""{"email":  "some.person@some.xy"}""")))
 
 

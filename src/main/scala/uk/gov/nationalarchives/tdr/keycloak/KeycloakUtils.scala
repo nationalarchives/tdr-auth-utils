@@ -6,7 +6,6 @@ import io.circe.Error
 import io.circe.generic.auto._
 import org.keycloak.adapters.rotation.AdapterTokenVerifier
 import org.keycloak.representations.AccessToken
-import org.keycloak.representations.account.UserRepresentation
 import sttp.client3._
 import sttp.client3.circe._
 import uk.gov.nationalarchives.tdr.keycloak.KeycloakUtils.{AuthResponse, UserDetails}
@@ -90,7 +89,7 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
       case futureTag if futureTag == classTag[Future[_]] => response.asInstanceOf[Future[Response[Either[ResponseException[String, Error], UserDetails]]]].flatMap(process)
       case identityTag if identityTag == classTag[Identity[_]] => process(response.asInstanceOf[Identity[Response[Either[ResponseException[String, Error], UserDetails]]]])
     }
-
+    logger.info(s"Details for user $userId requested by client $clientId")
     userResponse
   }
 }

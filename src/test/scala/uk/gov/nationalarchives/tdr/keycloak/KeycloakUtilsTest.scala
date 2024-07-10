@@ -1,15 +1,14 @@
 package uk.gov.nationalarchives.tdr.keycloak
 
-
-import java.util.UUID
-import java.util.concurrent.TimeUnit
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
 import com.tngtech.keycloakmock.api.TokenConfig
 import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
 import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatest.matchers.should.Matchers._
 import sttp.client3.{HttpError, HttpURLConnectionBackend, Identity, SttpBackend}
 
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable}
 
@@ -193,13 +192,13 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
     userOk(userId.toString)
     val utils = KeycloakUtils()
-    await(utils.userDetails(userId.toString, "clientId", "secret"))
+
+    val response = utils.userDetails(userId.toString, "clientId", "secret").futureValue
 
     wiremockAuthServer.verify(postRequestedFor(urlEqualTo(s"$userPath/${userId.toString}"))
       .withRequestBody(equalTo("grant_type=client_credentials"))
       .withHeader("Authorization", equalTo("Basic Y2xpZW50SWQ6c2VjcmV0")))
 
-    val response = utils.userDetails(userId.toString, "clientId", "secret").futureValue
     response.email should equal("some.person@some.xy")
   }
 
