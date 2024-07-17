@@ -1,15 +1,14 @@
 package uk.gov.nationalarchives.tdr.keycloak
 
-
-import java.util.UUID
-import java.util.concurrent.TimeUnit
-
 import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
 import com.tngtech.keycloakmock.api.TokenConfig
 import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
+import org.scalatest.concurrent.ScalaFutures.convertScalaFuture
 import org.scalatest.matchers.should.Matchers._
 import sttp.client3.{HttpError, HttpURLConnectionBackend, Identity, SttpBackend}
 
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable}
 
@@ -181,10 +180,34 @@ class KeycloakUtilsTest extends ServiceTest {
 
   "The service account token method" should "return an error if the api is unavailable" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
-    authUnavailable
+    authUnavailable()
     val utils = KeycloakUtils()
     val exception = intercept[HttpError[String]] {
       await(utils.serviceAccountToken("id", "secret"))
+    }
+    exception.body should equal("")
+  }
+
+  "'user details' method for the given user id" should "return the user's details" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
+    userOk(userId.toString)
+    val utils = KeycloakUtils()
+
+    val response = utils.userDetails(userId.toString, "clientId", "secret").futureValue
+
+    wiremockAuthServer.verify(postRequestedFor(urlEqualTo(s"$userPath/${userId.toString}"))
+      .withRequestBody(equalTo("grant_type=client_credentials"))
+      .withHeader("Authorization", equalTo("Basic Y2xpZW50SWQ6c2VjcmV0")))
+
+    response.email should equal("some.person@some.xy")
+  }
+
+  "'user details' method for the given user id" should "return an error if the api is unavailable" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
+    authUnavailable(s"$userPath/${userId.toString}")
+    val utils = KeycloakUtils()
+    val exception = intercept[HttpError[String]] {
+      await(utils.userDetails(userId.toString, "clientId", "secret"))
     }
     exception.body should equal("")
   }
