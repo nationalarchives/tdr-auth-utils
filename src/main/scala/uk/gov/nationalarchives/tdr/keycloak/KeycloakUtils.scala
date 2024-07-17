@@ -78,8 +78,8 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
 
     def process(response: Response[Either[ResponseException[String, Error], UserDetails]]): Future[UserDetails] = {
       response.body match {
-        case Right(v) => Future.successful(v)
-        case Left(e) => Future.failed(e)
+        case Right(userDetails) => Future.successful(userDetails)
+        case Left(error) => Future.failed(error)
       }
     }
 
