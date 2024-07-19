@@ -68,13 +68,15 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
 
   def userDetails[T[_]](userId: String, clientId: String, clientSecret: String)(implicit backend: SttpBackend[T, Any], tag: ClassTag[T[_]], keycloakDeployment: TdrKeycloakDeployment): Future[UserDetails] = {
     val body: Map[String, String] = Map("grant_type" -> "client_credentials")
-
-    val response: T[Response[Either[ResponseException[String, Error], UserDetails]]] = basicRequest
-      .body(body)
-      .auth.basic(clientId, clientSecret)
-      .get(uri"${keycloakDeployment.getAuthServerBaseUrl}/realms/tdr/users/$userId")
-      .response(asJson[UserDetails])
-      .send(backend)
+    val response = for {
+      bearerAccessToken <- serviceAccountToken(clientId, clientSecret)
+      response = basicRequest
+        .body(body)
+        .auth.bearer(bearerAccessToken.toString)
+        .get(uri"${keycloakDeployment.getAuthServerBaseUrl}/admin/realms/tdr/users/$userId")
+        .response(asJson[UserDetails])
+        .send(backend)
+    } yield response
 
     def process(response: Response[Either[ResponseException[String, Error], UserDetails]]): Future[UserDetails] = {
       response.body match {
