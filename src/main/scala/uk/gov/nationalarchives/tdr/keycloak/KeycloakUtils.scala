@@ -71,7 +71,7 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
       bearerAccessToken <- serviceAccountToken(clientId, clientSecret)
       response = basicRequest
         .auth.bearer(bearerAccessToken.toString)
-        .get(uri"https://auth.tdr-integration.nationalarchives.gov.uk/admin/realms/tdr/users/$userId")
+        .get(uri"${keycloakDeployment.getAuthServerBaseUrl}/admin/realms/tdr/users/$userId")
         .response(asJson[UserDetails])
         .send(backend)
     } yield response
