@@ -28,7 +28,7 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
     }.toEither
   }
 
-  def token(token:String)(implicit keycloakDeployment: TdrKeycloakDeployment): Either[Throwable, Token] = {
+  def token(token: String)(implicit keycloakDeployment: TdrKeycloakDeployment): Either[Throwable, Token] = {
     getAccessToken(token).flatMap(at => {
       val validatedToken = Token(at, new BearerAccessToken(token))
       at.getOtherClaims.asScala.get("user_id") match {
@@ -67,13 +67,11 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
   }
 
   def userDetails[T[_]](userId: String, clientId: String, clientSecret: String)(implicit backend: SttpBackend[T, Any], tag: ClassTag[T[_]], keycloakDeployment: TdrKeycloakDeployment): Future[UserDetails] = {
-    val body: Map[String, String] = Map("grant_type" -> "client_credentials")
-    val response = for {
+    val response: Future[T[Response[Either[ResponseException[String, Error], UserDetails]]]] = for {
       bearerAccessToken <- serviceAccountToken(clientId, clientSecret)
       response = basicRequest
-        .body(body)
         .auth.bearer(bearerAccessToken.toString)
-        .get(uri"${keycloakDeployment.getAuthServerBaseUrl}/admin/realms/tdr/users/$userId")
+        .get(uri"https://auth.tdr-integration.nationalarchives.gov.uk/admin/realms/tdr/users/$userId")
         .response(asJson[UserDetails])
         .send(backend)
     } yield response
@@ -88,8 +86,10 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
     //The backend type is either SttpBackend[Future, Nothing, NothingT] for async backends or SttpBackend[Identity, Nothing, NothingT] for sync ones
     //There probably are other choices but these are the only ones we're using and we can always add another match in
     val userResponse = tag match {
-      case futureTag if futureTag == classTag[Future[_]] => response.asInstanceOf[Future[Response[Either[ResponseException[String, Error], UserDetails]]]].flatMap(process)
-      case identityTag if identityTag == classTag[Identity[_]] => process(response.asInstanceOf[Identity[Response[Either[ResponseException[String, Error], UserDetails]]]])
+      case futureTag if futureTag == classTag[Future[_]] =>
+        response.flatMap(_.asInstanceOf[Future[Response[Either[ResponseException[String, Error], UserDetails]]]]).flatMap(process)
+      case identityTag if identityTag == classTag[Identity[_]] =>
+        response.flatMap(r => process(r.asInstanceOf[Identity[Response[Either[ResponseException[String, Error], UserDetails]]]]))
     }
     logger.info(s"Details for user $userId requested by client $clientId")
     userResponse
@@ -98,6 +98,7 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
 
 object KeycloakUtils {
   case class AuthResponse(access_token: String)
+
   case class UserDetails(email: String)
 
   def apply()(implicit executionContext: ExecutionContext): KeycloakUtils = new KeycloakUtils()
