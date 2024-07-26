@@ -24,6 +24,7 @@ class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfte
   val wiremockAuthServer = new WireMockServer(0)
 
   val authPath = "/auth/realms/tdr/protocol/openid-connect/token"
+
   def authUrl: String = wiremockAuthServer.url("/auth")
 
   def authOk: StubMapping = wiremockAuthServer.stubFor(post(urlEqualTo(authPath))
@@ -31,10 +32,12 @@ class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfte
 
   def authUnavailable(url: String = authPath): StubMapping = wiremockAuthServer.stubFor(post(urlEqualTo(url)).willReturn(serverError()))
 
-  val userPath = "/auth/realms/tdr/users"
-  def userOk(userId: String): StubMapping = wiremockAuthServer.stubFor(post(urlEqualTo(s"$userPath/$userId"))
+  val userPath = "/auth/admin/realms/tdr/users"
+
+  def userOk(userId: String): StubMapping = wiremockAuthServer.stubFor(get(urlEqualTo(s"$userPath/$userId"))
     .willReturn(okJson("""{"email":  "some.person@some.xy"}""")))
 
+  def userDetailsUnavailable(url: String = userPath): StubMapping = wiremockAuthServer.stubFor(get(urlEqualTo(url)).willReturn(serverError()))
 
   override def beforeAll(): Unit = {
     mock.start()
