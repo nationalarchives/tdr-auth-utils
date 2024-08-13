@@ -1,22 +1,23 @@
 package uk.gov.nationalarchives.tdr.keycloak
 
-
-import java.util.UUID
-import java.util.concurrent.TimeUnit
-
-import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, postRequestedFor, urlEqualTo}
+import com.github.tomakehurst.wiremock.client.WireMock.{equalTo, getRequestedFor, postRequestedFor, urlEqualTo}
 import com.tngtech.keycloakmock.api.TokenConfig
 import com.tngtech.keycloakmock.api.TokenConfig.aTokenConfig
 import org.scalatest.matchers.should.Matchers._
 import sttp.client3.{HttpError, HttpURLConnectionBackend, Identity, SttpBackend}
 
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Awaitable}
 
 class KeycloakUtilsTest extends ServiceTest {
   implicit val backend: SttpBackend[Identity, Any] = HttpURLConnectionBackend()
+
   def await[T](result: Awaitable[T]): T = Await.result(result, Duration(5, TimeUnit.SECONDS))
+
   val userId: UUID = UUID.randomUUID()
+
   def configWithUser: TokenConfig.Builder = aTokenConfig().withClaim("user_id", userId.toString)
 
   "The token method " should "return a bearer token for a valid token string " in {
@@ -127,7 +128,7 @@ class KeycloakUtilsTest extends ServiceTest {
     val role = "backend_check_role"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-backend-checks", role).build())
     val token = utils.token(mockToken).right.value
-    token.backendChecksRoles.size should be (1)
+    token.backendChecksRoles.size should be(1)
     token.backendChecksRoles should contain(role)
   }
 
@@ -135,7 +136,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
     val token = utils.token(mockToken).right.value
-    token.backendChecksRoles.size should be (0)
+    token.backendChecksRoles.size should be(0)
   }
 
   "The token method" should "return the correct reporting role for a valid token" in {
@@ -143,7 +144,7 @@ class KeycloakUtilsTest extends ServiceTest {
     val role = "reporting_role"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-reporting", role).build())
     val token = utils.token(mockToken).right.value
-    token.reportingRoles.size should be (1)
+    token.reportingRoles.size should be(1)
     token.reportingRoles should contain(role)
   }
 
@@ -151,7 +152,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
     val token = utils.token(mockToken).right.value
-    token.reportingRoles.size should be (0)
+    token.reportingRoles.size should be(0)
   }
 
   "The token method " should "return an error for an invalid token" in {
@@ -181,10 +182,35 @@ class KeycloakUtilsTest extends ServiceTest {
 
   "The service account token method" should "return an error if the api is unavailable" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
-    authUnavailable
+    authUnavailable()
     val utils = KeycloakUtils()
     val exception = intercept[HttpError[String]] {
       await(utils.serviceAccountToken("id", "secret"))
+    }
+    exception.body should equal("")
+  }
+
+  "'user details' method for the given user id" should "return the user's details" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
+    authOk
+    userOk(userId.toString)
+    val utils = KeycloakUtils()
+
+    val response = await(utils.userDetails(userId.toString, "clientId", "secret"))
+
+    wiremockAuthServer.verify(getRequestedFor(urlEqualTo(s"$userPath/${userId.toString}"))
+      .withHeader("Authorization", equalTo("Bearer token")))
+
+    response.email should equal("some.person@some.xy")
+  }
+
+  "'user details' method for the given user id" should "return an error if the api is unavailable" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(authUrl, "tdr", 3600)
+    authOk
+    userDetailsUnavailable(s"$userPath/${userId.toString}")
+    val utils = KeycloakUtils()
+    val exception = intercept[HttpError[String]] {
+      await(utils.userDetails(userId.toString, "clientId", "secret"))
     }
     exception.body should equal("")
   }
