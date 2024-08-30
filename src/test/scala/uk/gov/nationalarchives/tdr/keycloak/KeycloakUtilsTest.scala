@@ -100,11 +100,25 @@ class KeycloakUtilsTest extends ServiceTest {
     token.isTNAUser should equal(true)
   }
 
-  "The token method " should "return tna user type 'false' where claim set to false" in {
+  "The token method " should "return transfer advisor user type 'false' where claim set to false" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("tna_user", "false").build())
     val token = utils.token(mockToken).right.value
     token.isTNAUser should equal(false)
+  }
+
+  "The token method " should "return transfer advisor user type 'true' where claim set to true" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser.withClaim("transfer_adviser", "true").build())
+    val token = utils.token(mockToken).right.value
+    token.isTransferAdviser should equal(true)
+  }
+
+  "The token method " should "return tna user type 'false' where claim set to false" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser.withClaim("transfer_adviser", "false").build())
+    val token = utils.token(mockToken).right.value
+    token.isTransferAdviser should equal(false)
   }
 
   "The token method " should "return standard user type 'false' where claim not test" in {

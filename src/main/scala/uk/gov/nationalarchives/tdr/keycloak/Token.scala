@@ -17,7 +17,11 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   def transferringBody: Option[String] = getOtherClaim("body")
   def isJudgmentUser: Boolean = getOtherClaim("judgment_user").getOrElse("false").toBoolean
   def isStandardUser: Boolean = getOtherClaim("standard_user").getOrElse("false").toBoolean
+
   def isTNAUser: Boolean = getOtherClaim("tna_user").getOrElse("false").toBoolean
+
+  def isTransferAdviser: Boolean = getOtherClaim("transfer_adviser").getOrElse("false").toBoolean
+
   def roles: Set[String] =
     Option(token.getResourceAccess("tdr")) match {
       case Some(access) => access.getRoles.asScala.toSet
