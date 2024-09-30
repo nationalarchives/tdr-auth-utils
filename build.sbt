@@ -25,7 +25,7 @@ ThisBuild / description := "Helper classes related to Keycloak and authenticatio
 ThisBuild / licenses := List("MIT" -> new URL("https://choosealicense.com/licenses/mit/"))
 ThisBuild / homepage := Some(url("https://github.com/nationalarchives/tdr-auth-utils"))
 
-scalaVersion := "2.13.14"
+scalaVersion := "2.13.15"
 
 useGpgPinentry := true
 publishTo := sonatypePublishToBundle.value
