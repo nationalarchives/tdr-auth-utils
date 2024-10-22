@@ -3,10 +3,10 @@ import sbt._
 object Dependencies {
   private lazy val circeVersion = "0.14.10"
   private lazy val softWareMillVersion = "3.9.7"
-  private lazy val keycloakVersion = "24.0.5"
+  private lazy val keycloakVersion = "26.0.1"
 
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.19"
-  lazy val keycloakAdapterCore  = "org.keycloak" % "keycloak-adapter-core" % keycloakVersion
+  lazy val keycloakAdapterCore  = "org.keycloak" % "keycloak-adapter-core" % "25.0.3"
   lazy val keycloakCore = "org.keycloak" % "keycloak-core" % keycloakVersion
   lazy val logger = "com.typesafe.scala-logging" %% "scala-logging" % "3.9.5"
   lazy val httpComponents = "org.apache.httpcomponents" % "httpclient" % "4.5.14"
