@@ -162,7 +162,7 @@ class KeycloakUtilsTest extends ServiceTest {
     token.reportingRoles should contain(role)
   }
 
-  "The token method" should "return no reporting roles for a valid token if not roles defined" in {
+  "The token method" should "return no reporting roles for a valid token if no roles defined" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
     val token = utils.token(mockToken).value
@@ -178,7 +178,7 @@ class KeycloakUtilsTest extends ServiceTest {
     token.transferServiceRoles should contain(role)
   }
 
-  "The token method" should "return no transfer service roles for a valid token if not roles defined" in {
+  "The token method" should "return no transfer service roles for a valid token if no roles defined" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
     val token = utils.token(mockToken).value
