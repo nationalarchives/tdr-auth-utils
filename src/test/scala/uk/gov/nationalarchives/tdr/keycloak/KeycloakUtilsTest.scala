@@ -23,14 +23,14 @@ class KeycloakUtilsTest extends ServiceTest {
   "The token method " should "return a bearer token for a valid token string " in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build)
-    val token: Token = utils.token(mockToken).right.value
+    val token: Token = utils.token(mockToken).value
     token.bearerAccessToken.getValue should equal(mockToken)
   }
 
   "The token method " should "return the correct user id for a valid token" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.userId should equal(userId)
   }
 
@@ -38,7 +38,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val body = "body"
     val mockToken = mock.getAccessToken(configWithUser.withClaim("body", body).build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.transferringBody should equal(Some(body))
   }
 
@@ -46,7 +46,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val name = "name"
     val mockToken = mock.getAccessToken(configWithUser.withGivenName(name).build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.name should equal(name)
   }
 
@@ -54,77 +54,77 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val email = "email"
     val mockToken = mock.getAccessToken(configWithUser.withEmail(email).build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.email should equal(email)
   }
 
   "The token method " should "return judgment user type 'true' where claim set to true" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("judgment_user", "true").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isJudgmentUser should equal(true)
   }
 
   "The token method " should "return judgment user type 'false' where claim set to false" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("judgment_user", "false").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isJudgmentUser should equal(false)
   }
 
   "The token method" should "return judgment user type 'false' where claim not set" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isJudgmentUser should equal(false)
   }
 
   "The token method " should "return standard user type 'true' where claim set to true" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("standard_user", "true").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isStandardUser should equal(true)
   }
 
   "The token method " should "return standard user type 'false' where claim set to false" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("standard_user", "false").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isStandardUser should equal(false)
   }
 
   "The token method " should "return tna user type 'true' where claim set to true" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("tna_user", "true").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isTNAUser should equal(true)
   }
 
   "The token method " should "return transfer advisor user type 'false' where claim set to false" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("tna_user", "false").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isTNAUser should equal(false)
   }
 
   "The token method " should "return transfer advisor user type 'true' where claim set to true" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("transfer_adviser", "true").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isTransferAdviser should equal(true)
   }
 
   "The token method " should "return tna user type 'false' where claim set to false" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.withClaim("transfer_adviser", "false").build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isTransferAdviser should equal(false)
   }
 
   "The token method " should "return standard user type 'false' where claim not test" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.isStandardUser should equal(false)
   }
 
@@ -132,7 +132,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val role = "role_admin"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr", role).build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.roles.size should be(1)
     token.roles should contain(role)
   }
@@ -141,7 +141,7 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val role = "backend_check_role"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-backend-checks", role).build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.backendChecksRoles.size should be(1)
     token.backendChecksRoles should contain(role)
   }
@@ -149,7 +149,7 @@ class KeycloakUtilsTest extends ServiceTest {
   "The token method" should "return no back end checks roles for a valid token if no roles defined" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.backendChecksRoles.size should be(0)
   }
 
@@ -157,16 +157,32 @@ class KeycloakUtilsTest extends ServiceTest {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val role = "reporting_role"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-reporting", role).build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.reportingRoles.size should be(1)
     token.reportingRoles should contain(role)
   }
 
-  "The token method" should "return no reporting roles for a valid token if not roles defined" in {
+  "The token method" should "return no reporting roles for a valid token if no roles defined" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
-    val token = utils.token(mockToken).right.value
+    val token = utils.token(mockToken).value
     token.reportingRoles.size should be(0)
+  }
+
+  "The token method" should "return the correct transfer service role for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val role = "service_role"
+    val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-transfer-service", role).build())
+    val token = utils.token(mockToken).value
+    token.transferServiceRoles.size should be(1)
+    token.transferServiceRoles should contain(role)
+  }
+
+  "The token method" should "return no transfer service roles for a valid token if no roles defined" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser.build())
+    val token = utils.token(mockToken).value
+    token.transferServiceRoles.size should be(0)
   }
 
   "The token method " should "return an error for an invalid token" in {
