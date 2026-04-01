@@ -194,6 +194,15 @@ class KeycloakUtilsTest extends ServiceTest {
     token.draftMetadataRoles should contain(role)
   }
 
+  "The token method" should "return the correct export role for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val role = "export_role"
+    val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-export", role).build())
+    val token = utils.token(mockToken).value
+    token.draftMetadataRoles.size should be(1)
+    token.draftMetadataRoles should contain(role)
+  }
+
   "The token method" should "return no draft metadata roles for a valid token if no roles defined" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val mockToken = mock.getAccessToken(configWithUser.build())
