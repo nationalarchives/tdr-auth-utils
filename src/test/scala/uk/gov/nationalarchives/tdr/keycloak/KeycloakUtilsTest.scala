@@ -199,8 +199,8 @@ class KeycloakUtilsTest extends ServiceTest {
     val role = "export_role"
     val mockToken = mock.getAccessToken(configWithUser.withResourceRole("tdr-export", role).build())
     val token = utils.token(mockToken).value
-    token.draftMetadataRoles.size should be(1)
-    token.draftMetadataRoles should contain(role)
+    token.exportRoles.size should be(1)
+    token.exportRoles should contain(role)
   }
 
   "The token method" should "return no draft metadata roles for a valid token if no roles defined" in {
