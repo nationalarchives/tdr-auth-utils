@@ -257,6 +257,8 @@ class KeycloakUtilsTest extends ServiceTest {
       .withHeader("Authorization", equalTo("Bearer token")))
 
     response.email should equal("some.person@some.xy")
+    response.firstName should equal("FirstName")
+    response.lastName should equal("LastName")
   }
 
   "'user details' method for the given user id" should "return an error if the api is unavailable" in {
