@@ -35,7 +35,7 @@ class ServiceTest extends AnyFlatSpec with BeforeAndAfterEach with BeforeAndAfte
   val userPath = "/auth/admin/realms/tdr/users"
 
   def userOk(userId: String): StubMapping = wiremockAuthServer.stubFor(get(urlEqualTo(s"$userPath/$userId"))
-    .willReturn(okJson("""{"email":  "some.person@some.xy"}""")))
+    .willReturn(okJson("""{"email":"some.person@some.xy","firstName":"FirstName","lastName":"LastName"}""")))
 
   def userDetailsUnavailable(url: String = userPath): StubMapping = wiremockAuthServer.stubFor(get(urlEqualTo(url)).willReturn(serverError()))
 

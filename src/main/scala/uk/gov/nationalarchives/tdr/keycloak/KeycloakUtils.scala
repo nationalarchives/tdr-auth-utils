@@ -99,7 +99,7 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
 object KeycloakUtils {
   case class AuthResponse(access_token: String)
 
-  case class UserDetails(email: String)
+  case class UserDetails(email: String, firstName: String, lastName: String)
 
   def apply()(implicit executionContext: ExecutionContext): KeycloakUtils = new KeycloakUtils()
 }
