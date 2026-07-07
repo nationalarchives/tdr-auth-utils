@@ -68,5 +68,9 @@ lazy val root = (project in file("."))
       circeGeneric,
       keycloakMock % Test,
       wiremock % Test
+    ),
+    dependencyOverrides ++= Seq(
+      bcprov,
+      bcpkix
     )
   )
