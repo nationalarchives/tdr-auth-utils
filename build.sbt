@@ -23,7 +23,7 @@ developers := List(
 )
 
 ThisBuild / description := "Helper classes related to Keycloak and authentication for the Transfer Digital Records service"
-ThisBuild / licenses := List("MIT" -> new URL("https://choosealicense.com/licenses/mit/"))
+ThisBuild / licenses := List(License.apply("MIT", url("https://choosealicense.com/licenses/mit/")))
 ThisBuild / homepage := Some(url("https://github.com/nationalarchives/tdr-auth-utils"))
 
 scalaVersion := "2.13.18"
