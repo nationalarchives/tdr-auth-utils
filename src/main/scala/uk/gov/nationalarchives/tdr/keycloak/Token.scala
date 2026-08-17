@@ -15,6 +15,11 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   def name: String = token.getName
   def email: String = token.getEmail
   def transferringBody: Option[String] = getOtherClaim("body")
+  def transferringBodies: List[String] = Option(getOtherClaim("bodies")) match {
+    case None => Nil
+    case Some(bodies) => bodies.get.drop(1).dropRight(1).split(",").map(_.trim).toList
+  }
+
   def isJudgmentUser: Boolean = getOtherClaim("judgment_user").getOrElse("false").toBoolean
   def isStandardUser: Boolean = getOtherClaim("standard_user").getOrElse("false").toBoolean
 
