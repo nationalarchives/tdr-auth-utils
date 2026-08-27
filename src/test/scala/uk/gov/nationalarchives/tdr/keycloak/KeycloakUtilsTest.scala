@@ -42,6 +42,14 @@ class KeycloakUtilsTest extends ServiceTest {
     token.transferringBody should equal(Some(body))
   }
 
+  "The token method " should "return the correct transferring bodies for a valid token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val bodies = java.util.Arrays.asList("body1", "body2")
+    val mockToken = mock.getAccessToken(configWithUser.withClaim("bodies", bodies).build())
+    val token = utils.token(mockToken).value
+    token.transferringBodies should equal(Some(List("body1", "body2")))
+  }
+
   "The token method " should "return the correct name for a valid token" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
     val name = "name"
