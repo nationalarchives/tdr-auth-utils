@@ -1,10 +1,10 @@
 package uk.gov.nationalarchives.tdr.keycloak
 
-import java.util.UUID
-
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken
 import org.keycloak.representations.AccessToken
 
+import java.util
+import java.util.UUID
 import scala.jdk.CollectionConverters._
 
 class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessToken) {
@@ -14,7 +14,9 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   def userId: UUID = UUID.fromString(getOtherClaim("user_id").get)
   def name: String = token.getName
   def email: String = token.getEmail
+  @deprecated("Use transferringBodies instead")
   def transferringBody: Option[String] = getOtherClaim("body")
+  def transferringBodies: Option[List[String]] = token.getOtherClaims.asScala.get("bodies").map(_.asInstanceOf[util.List[String]].asScala.toList)
   def isJudgmentUser: Boolean = getOtherClaim("judgment_user").getOrElse("false").toBoolean
   def isStandardUser: Boolean = getOtherClaim("standard_user").getOrElse("false").toBoolean
 
