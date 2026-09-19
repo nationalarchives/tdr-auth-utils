@@ -18,6 +18,6 @@ object Dependencies {
   lazy val sttpCirce = "com.softwaremill.sttp.client3" %% "circe" % softWareMillVersion
   lazy val circeCore = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
-  lazy val bcprov = "org.bouncycastle" % "bcprov-jdk18on" % "1.85.2"
+  lazy val bcprov = "org.bouncycastle" % "bcprov-jdk18on" % "1.86"
   lazy val bcpkix = "org.bouncycastle" % "bcpkix-jdk18on" % "1.86"
 }
