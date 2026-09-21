@@ -20,7 +20,8 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
   val logger: Logger = Logger("KeycloakUtils")
   val ttlSeconds: Int = 10
 
-  case class MissingUserIdException() extends Exception("The user id in the token is missing")
+  private case class MissingUserIdException() extends Exception("The user id in the token is missing")
+  private case class MissingTransferringBodyException(userId: String) extends Exception(s"User $userId is not assigned to a transferring body")
 
   private def getAccessToken(token: String)(implicit keycloakDeployment: TdrKeycloakDeployment): Either[Throwable, AccessToken] = {
     Try {
@@ -28,12 +29,28 @@ class KeycloakUtils(implicit val executionContext: ExecutionContext) {
     }.toEither
   }
 
+  private def transferringBodyMissing(token: Token): Boolean = {
+    token.transferringBodies match {
+      case Some(bodies) if bodies.nonEmpty                   => false
+      case _ if token.isStandardUser || token.isJudgmentUser => true
+      case _                                                 => false
+    }
+  }
+
+  private def checkUserConfiguration(token: Token): Either[Throwable, Token] = {
+    lazy val userId = token.userId.toString
+    token match {
+      case _ if transferringBodyMissing(token) => Left(MissingTransferringBodyException(userId))
+      case _ => Right(token)
+    }
+  }
+
   def token(token: String)(implicit keycloakDeployment: TdrKeycloakDeployment): Either[Throwable, Token] = {
     getAccessToken(token).flatMap(at => {
       val validatedToken = Token(at, new BearerAccessToken(token))
       at.getOtherClaims.asScala.get("user_id") match {
-        case Some(_) => Right(validatedToken)
-        case None => Left(MissingUserIdException())
+        case None                                               => Left(MissingUserIdException())
+        case Some(_)                                            => checkUserConfiguration(validatedToken)
       }
     })
   }
