@@ -3,7 +3,7 @@ import sbt._
 object Dependencies {
   private lazy val circeVersion = "0.14.16"
   private lazy val softWareMillVersion = "3.11.0"
-  private lazy val keycloakVersion = "26.7.2"
+  private lazy val keycloakVersion = "26.7.4"
   
   lazy val scalaTest = "org.scalatest" %% "scalatest" % "3.2.20"
   lazy val keycloakAdapterCore  = "org.keycloak" % "keycloak-adapter-core" % "25.0.3"
@@ -18,6 +18,6 @@ object Dependencies {
   lazy val sttpCirce = "com.softwaremill.sttp.client3" %% "circe" % softWareMillVersion
   lazy val circeCore = "io.circe" %% "circe-core" % circeVersion
   lazy val circeGeneric = "io.circe" %% "circe-generic" % circeVersion
-  lazy val bcprov = "org.bouncycastle" % "bcprov-jdk18on" % "1.85.2"
-  lazy val bcpkix = "org.bouncycastle" % "bcpkix-jdk18on" % "1.85"
+  lazy val bcprov = "org.bouncycastle" % "bcprov-jdk18on" % "1.86"
+  lazy val bcpkix = "org.bouncycastle" % "bcpkix-jdk18on" % "1.86"
 }
