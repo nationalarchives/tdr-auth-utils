@@ -18,7 +18,8 @@ class KeycloakUtilsTest extends ServiceTest {
 
   val userId: UUID = UUID.randomUUID()
 
-  def configWithUser: TokenConfig.Builder = aTokenConfig().withClaim("user_id", userId.toString)
+  def configWithUser: TokenConfig.Builder = aTokenConfig()
+    .withClaim("user_id", userId.toString)
 
   "The token method " should "return a bearer token for a valid token string " in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
@@ -68,7 +69,10 @@ class KeycloakUtilsTest extends ServiceTest {
 
   "The token method " should "return judgment user type 'true' where claim set to true" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
-    val mockToken = mock.getAccessToken(configWithUser.withClaim("judgment_user", "true").build())
+    val mockToken = mock.getAccessToken(configWithUser
+      .withClaim("judgment_user", "true")
+      .withClaim("bodies", java.util.Arrays.asList("bodyCode"))
+      .build())
     val token = utils.token(mockToken).value
     token.isJudgmentUser should equal(true)
   }
@@ -89,7 +93,10 @@ class KeycloakUtilsTest extends ServiceTest {
 
   "The token method " should "return standard user type 'true' where claim set to true" in {
     implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
-    val mockToken = mock.getAccessToken(configWithUser.withClaim("standard_user", "true").build())
+    val mockToken = mock.getAccessToken(configWithUser
+      .withClaim("standard_user", "true")
+      .withClaim("bodies", java.util.Arrays.asList("bodyCode"))
+      .build())
     val token = utils.token(mockToken).value
     token.isStandardUser should equal(true)
   }
@@ -230,6 +237,48 @@ class KeycloakUtilsTest extends ServiceTest {
     val mockToken = mock.getAccessToken(aTokenConfig().build())
     val error = utils.token(mockToken).left.value
     error.getMessage should equal("The user id in the token is missing")
+  }
+
+  "The token method" should "return an error for a standard user with no 'bodies' in the token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(
+      configWithUser
+        .withClaim("standard_user", "true")
+        .build())
+    val error = utils.token(mockToken).left.value
+    error.getMessage should equal(s"User $userId is not assigned to a transferring body")
+  }
+
+  "The token method" should "return an error for a standard user with empty 'bodies' in the token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(
+      configWithUser
+        .withClaim("standard_user", "true")
+        .withClaim("bodies", java.util.Arrays.asList())
+        .build())
+    val error = utils.token(mockToken).left.value
+    error.getMessage should equal(s"User $userId is not assigned to a transferring body")
+  }
+
+  "The token method" should "return an error for a judgment user with no 'bodies' in the token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(
+      configWithUser
+        .withClaim("judgment_user", "true")
+        .build())
+    val error = utils.token(mockToken).left.value
+    error.getMessage should equal(s"User $userId is not assigned to a transferring body")
+  }
+
+  "The token method" should "return an error for a judgment user with empty 'bodies' in the token" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(
+      configWithUser
+        .withClaim("judgment_user", "true")
+        .withClaim("bodies", java.util.Arrays.asList())
+        .build())
+    val error = utils.token(mockToken).left.value
+    error.getMessage should equal(s"User $userId is not assigned to a transferring body")
   }
 
   "The service account token method" should "call the auth service" in {
