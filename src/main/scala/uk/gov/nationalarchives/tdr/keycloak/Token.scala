@@ -19,6 +19,7 @@ class Token(private val token: AccessToken, val bearerAccessToken: BearerAccessT
   def transferringBodies: Option[List[String]] = token.getOtherClaims.asScala.get("bodies").map(_.asInstanceOf[util.List[String]].asScala.toList)
   def isJudgmentUser: Boolean = getOtherClaim("judgment_user").getOrElse("false").toBoolean
   def isStandardUser: Boolean = getOtherClaim("standard_user").getOrElse("false").toBoolean
+  def isConnectorSharePointUser: Boolean = getOtherClaim("connector_for_sharepoint_user").getOrElse("false").toBoolean
 
   def isTNAUser: Boolean = getOtherClaim("tna_user").getOrElse("false").toBoolean
 

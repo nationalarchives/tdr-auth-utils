@@ -1,5 +1,4 @@
-import Dependencies._
-import sbt.url
+import Dependencies.*
 import sbtrelease.ReleaseStateTransformations.{checkSnapshotDependencies, commitNextVersion, commitReleaseVersion, inquireVersions, pushChanges, runClean, runTest, setNextVersion, setReleaseVersion, tagRelease}
 import sbt.internal.librarymanagement.Publishing.sonaRelease
 
@@ -9,7 +8,7 @@ ThisBuild / organizationName := "National Archives"
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/nationalarchives/tdr-auth-utils-data"),
+    uri("https://github.com/nationalarchives/tdr-auth-utils-data"),
     "git@github.com:nationalarchives/tdr-auth-utils.git"
   )
 )
@@ -18,13 +17,13 @@ developers := List(
     id    = "tna-da-bot",
     name  = "TNA Digital Archiving",
     email = "s-GitHubDABot@nationalarchives.gov.uk",
-    url   = url("https://github.com/nationalarchives/tdr-generated-grapqhl")
+    url   = uri("https://github.com/nationalarchives/tdr-generated-grapqhl")
   )
 )
 
 ThisBuild / description := "Helper classes related to Keycloak and authentication for the Transfer Digital Records service"
-ThisBuild / licenses := List(License.apply("MIT", url("https://choosealicense.com/licenses/mit/")))
-ThisBuild / homepage := Some(url("https://github.com/nationalarchives/tdr-auth-utils"))
+ThisBuild / licenses := List(License.apply("MIT", uri("https://choosealicense.com/licenses/mit/")))
+ThisBuild / homepage := Some(uri("https://github.com/nationalarchives/tdr-auth-utils"))
 
 scalaVersion := "2.13.18"
 
