@@ -328,4 +328,29 @@ class KeycloakUtilsTest extends ServiceTest {
     }
     exception.body should equal("")
   }
+
+  "The token method " should "return connector for sharepoint user type 'true' where claim set to true" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser
+      .withClaim("connector_for_sharepoint_user", "true")
+      .build())
+    val token = utils.token(mockToken).value
+    token.isConnectorSharePointUser should equal(true)
+  }
+
+  "The token method " should "return connector for sharepoint user type 'false' where claim set to false" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser
+      .withClaim("connector_for_sharepoint", "false")
+      .build())
+    val token = utils.token(mockToken).value
+    token.isConnectorSharePointUser should equal(false)
+  }
+
+  "The token method" should "return connector for sharepoint user type 'false' where claim not set" in {
+    implicit val keycloakDeployment: TdrKeycloakDeployment = TdrKeycloakDeployment(url, "tdr", 3600)
+    val mockToken = mock.getAccessToken(configWithUser.build())
+    val token = utils.token(mockToken).value
+    token.isConnectorSharePointUser should equal(false)
+  }
 }
